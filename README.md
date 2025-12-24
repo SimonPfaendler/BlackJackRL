@@ -44,10 +44,15 @@ The environment is a simplified simulation of Blackjack:
 
 ## How It Works
 
-The agent uses the **Monte Carlo Update Rule** to estimate the Action-Value function $Q(S, A)$.
+The agent uses the **Constant-Alpha Monte Carlo Update Rule** to estimate the Action-Value function $Q(S, A)$. 
+This approach allows the agent to slowly "forget" old, suboptimal experiences and focus on recent, improved strategies.
 
-$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \frac{1}{N(S_t, A_t)} [G_t - Q(S_t, A_t)]$$
+$$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha [G_t - Q(S_t, A_t)]$$
 
+Where:
+* $\alpha$ is the learning rate (e.g., 0.01).
+* $G_t$ is the total return of the episode.
+* The term $[G_t - Q(S_t, A_t)]$ represents the prediction error.
 ## TODO
 
 * Heatmap
