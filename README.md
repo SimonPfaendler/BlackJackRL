@@ -13,7 +13,7 @@ For simplicity and faster convergence, this model uses a **"One Color"** deck (i
 * **First-Visit MC:** The Q-value is updated using the return from the *first* time a state was visited in an episode.
 * **Epsilon-Greedy Policy:** The agent explores random moves 10% of the time to ensure it discovers new strategies, while exploiting its best knowledge 90% of the time.
 
-## ⚙️ The Environment
+## The Environment
 
 The environment is a simplified simulation of Blackjack:
 
@@ -24,7 +24,7 @@ The environment is a simplified simulation of Blackjack:
 | **Rewards** | `+1` (Win), `-1` (Loss/Bust), `0` (Draw) |
 | **Simplification** | Infinite deck, single suit (uniform probability for 2-9, 4x for 10s). |
 
-## 🛠️ Installation & Usage
+## Installation & Usage
 
 1.  **Clone the repository:**
     ```bash
@@ -42,7 +42,7 @@ The environment is a simplified simulation of Blackjack:
     python blackjack.py
     ```
 
-## 🧠 How It Works
+## How It Works
 
 The agent uses the **Monte Carlo Update Rule** to estimate the Action-Value function $Q(S, A)$.
 
