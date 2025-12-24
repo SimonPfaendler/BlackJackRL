@@ -47,19 +47,3 @@ The environment is a simplified simulation of Blackjack:
 The agent uses the **Monte Carlo Update Rule** to estimate the Action-Value function $Q(S, A)$.
 
 $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \frac{1}{N(S_t, A_t)} [G_t - Q(S_t, A_t)]$$
-
-### Logic Flow
-The training process follows this loop:
-
-```mermaid
-graph TD;
-    A[Start Training] --> B[Initialize Q-Table];
-    B --> C{Episode Loop};
-    C -->|New Game| D[Reset Environment];
-    D --> E[Choose Action (Epsilon-Greedy)];
-    E --> F[Step Environment];
-    F -->|Not Done| E;
-    F -->|Game Over| G[Calculate Return G];
-    G --> H[Update Q-Values (Backwards)];
-    H --> C;
-    C -->|500k Episodes Reached| I[End & Print Strategy];
