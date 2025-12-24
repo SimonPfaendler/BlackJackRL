@@ -182,4 +182,5 @@ if __name__ == "__main__":
         if reward == 1: result = "Win"
         elif reward == -1: result = "Loss"
         print(f"Game Over. Result: {result}")
+        print(f"Player's Hand: {env.player_hand} (Sum: {env.sum_hand(env.player_hand)})")
         print(f"Dealer's Hand: {env.dealer_hand} (Sum: {env.sum_hand(env.dealer_hand)})")
