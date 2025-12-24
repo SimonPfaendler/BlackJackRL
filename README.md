@@ -47,3 +47,10 @@ The environment is a simplified simulation of Blackjack:
 The agent uses the **Monte Carlo Update Rule** to estimate the Action-Value function $Q(S, A)$.
 
 $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \frac{1}{N(S_t, A_t)} [G_t - Q(S_t, A_t)]$$
+
+## TODO
+
+* Heatmap
+* Double Down
+* 3:2 Payout
+* Real Deck with 4 Colors
