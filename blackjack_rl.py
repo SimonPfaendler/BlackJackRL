@@ -30,8 +30,8 @@ class BlackjackEnvironment:
         return total
 
     def get_obs(self):
-        """Returns the current state: (Player Sum, Dealer Visible Card, Usable Ace)"""
-        return (self.sum_hand(self.player_hand), self.dealer_hand[0], self.usable_ace(self.player_hand))
+        """Returns the current state: (Player Sum, Dealer Visible Card, Usable Ace, Can Double)"""
+        return (self.sum_hand(self.player_hand), self.dealer_hand[0], self.usable_ace(self.player_hand), len(self.player_hand) == 2)
 
     def reset(self):
         self.player_hand = self.draw_hand()
@@ -42,6 +42,7 @@ class BlackjackEnvironment:
         """
         Action 0: Stick
         Action 1: Hit
+        Action 2: Double Down
         Returns: (next_state, reward, done)
         """
         # --- Player's Turn ---
@@ -51,6 +52,43 @@ class BlackjackEnvironment:
                 return self.get_obs(), -1, True # Bust
             else:
                 return self.get_obs(), 0, False # Continue game
+        
+        elif action == 2: # Double Down
+            if len(self.player_hand) != 2:
+                # Invalid move (trying to double after hitting) - Heavy Penalty and End
+                return self.get_obs(), -10, True 
+            
+            # Double Down: Draw one card only, then forced Stick
+            self.player_hand.append(self.draw_card())
+            
+            if self.sum_hand(self.player_hand) > 21:
+                return self.get_obs(), -2, True # Bust (Double Loss)
+            
+            # Forced Stick check against dealer
+            # (Fall through to dealer logic below, but we need to set reward scale)
+            reward_mult = 2
+            
+            # --- Dealer's Turn (Code shared/duplicated for clarity) ---
+            decision_made = False
+            while not decision_made:
+                dealer_sum = self.sum_hand(self.dealer_hand)
+                if dealer_sum < 17:
+                    self.dealer_hand.append(self.draw_card())
+                else:
+                    decision_made = True
+            
+            player_sum = self.sum_hand(self.player_hand)
+            dealer_sum = self.sum_hand(self.dealer_hand)
+            
+            if dealer_sum > 21:
+                return self.get_obs(), 1 * reward_mult, True # Win Double
+            
+            if player_sum > dealer_sum:
+                return self.get_obs(), 1 * reward_mult, True # Win Double
+            elif player_sum < dealer_sum:
+                return self.get_obs(), -1 * reward_mult, True # Lose Double
+            else:
+                return self.get_obs(), 0, True # Draw
 
         else:  # Stick (Action 0)
             # --- Dealer's Turn ---
@@ -87,7 +125,7 @@ class BlackjackEnvironment:
 # --- 2. The Agent ---
 
 class MonteCarloAgent:
-    def __init__(self, action_space=[0, 1], alpha=0.01, gamma=1.0, epsilon=0.1):
+    def __init__(self, action_space=[0, 1, 2], alpha=0.01, gamma=1.0, epsilon=0.1):
         self.Q = {} # Dictionary mapping (state, action) -> value
         self.action_space = action_space
         self.alpha = alpha # Learning rate
@@ -160,6 +198,11 @@ def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
         
         while not done:
             action = agent.choose_action(state)
+            action_name = 'Stick'
+            if action == 1: action_name = 'Hit'
+            if action == 2: action_name = 'Double'
+            
+            # print(f"Action: {action_name}")
             state, reward, done = env.step(action)
         
         # Reward is 1, 1.5, 0, or -1.
@@ -171,7 +214,10 @@ def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
         if reward > 0: outcome = "Win"
         elif reward < 0: outcome = "Loss"
         
-        print(f"Hand {i+1}: {outcome} ({reward}). Bankroll: {current_bankroll:.1f} Euro")
+        # Calculate effective bet for display (Double Down = 2x)
+        effective_bet = bet * 2 if (action == 2) else bet
+        
+        print(f"Hand {i+1}: {outcome} ({action_name}). Bet: {effective_bet} -> Profit: {winnings:+.1f}. Bankroll: {current_bankroll:.1f} Euro")
 
     print(f"\n--- Night Over ---")
     print(f"Final Bankroll: {current_bankroll:.1f} Euro")
@@ -185,8 +231,10 @@ if __name__ == "__main__":
 
     num_episodes = 500000 # Reduced for quick simulation
     
-    # Tracking for visualization (optional)
+    # Tracking for visualization
     win_count = 0
+    draw_count = 0
+    loss_count = 0
     
     print(f"Starting training for {num_episodes} episodes...")
 
@@ -203,12 +251,24 @@ if __name__ == "__main__":
             
         agent.update(episode)
         
-        if episode[-1][2] >= 1: # Last reward was a win (1 or 1.5)
+        # Update counters based on *Last Reward*
+        final_reward = episode[-1][2]
+        if final_reward >= 1: # Win
             win_count += 1
+        elif final_reward <= -1: # Loss
+            loss_count += 1
+        else: # Draw (0)
+            draw_count += 1 # Note: In Gym, sometimes 0 is just "not finished", but here episode is done.
             
         if (i+1) % 50000 == 0:
-            print(f"Episode {i+1}/{num_episodes} - Win Rate (approx): {win_count/50000:.2f}")
+            total_in_batch = 50000
+            print(f"Episode {i+1}/{num_episodes} - "
+                  f"Win: {win_count/total_in_batch:.2f} | "
+                  f"Draw: {draw_count/total_in_batch:.2f} | "
+                  f"Loss: {loss_count/total_in_batch:.2f}")
             win_count = 0
+            draw_count = 0
+            loss_count = 0
 
     print("Training finished.")
 

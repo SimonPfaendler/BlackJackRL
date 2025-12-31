@@ -67,5 +67,4 @@ The project now includes a **"Gamble Night"** mode which runs after training.
 ## TODO
 
 * Heatmap
-* Double Down
 * Real Deck with 4 Colors
