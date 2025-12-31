@@ -56,7 +56,7 @@ Where:
 ## New Features
 
 ### 3:2 Payout
-The game now rewards **"Natural Blackjacks"** (getting 21 with the first two cards) with a **3:2 payout** (1.5x return). This makes the strategy more realistic compared to standard casino rules.
+The game now rewards **"Natural Blackjacks"** (getting 21 with the first two cards) with a **3:2 payout** (1.5x return).
 
 ### Gamble Night Simulation
 The project now includes a **"Gamble Night"** mode which runs after training.
