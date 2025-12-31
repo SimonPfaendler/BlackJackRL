@@ -67,10 +67,18 @@ class BlackjackEnvironment:
             
             # Compare hands
             if dealer_sum > 21:
-                return self.get_obs(), 1, True # Dealer busts, Player wins
+                # Dealer busts, Player wins
+                reward = 1
+                if player_sum == 21 and len(self.player_hand) == 2:
+                    reward = 1.5
+                return self.get_obs(), reward, True
             
             if player_sum > dealer_sum:
-                return self.get_obs(), 1, True # Win
+                # Win
+                reward = 1
+                if player_sum == 21 and len(self.player_hand) == 2:
+                    reward = 1.5
+                return self.get_obs(), reward, True
             elif player_sum < dealer_sum:
                 return self.get_obs(), -1, True # Lose
             else:
@@ -130,13 +138,52 @@ class MonteCarloAgent:
             
         return policy
 
+def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
+    print(f"\n--- Gamble Night Simulation ---")
+    print(f"Starting Bankroll: {bankroll} Euro")
+    print(f"Bet per hand: {bet} Euro")
+    
+    agent.epsilon = 0 # Play optimally
+    
+    current_bankroll = bankroll
+    history = []
+    
+    for i in range(max_hands):
+        if current_bankroll < bet:
+            print("Broke! Game Over.")
+            break
+            
+        state = env.reset()
+        done = False
+        
+        # print(f"Hand {i+1}: {state}")
+        
+        while not done:
+            action = agent.choose_action(state)
+            state, reward, done = env.step(action)
+        
+        # Reward is 1, 1.5, 0, or -1.
+        winnings = reward * bet
+        current_bankroll += winnings
+        history.append(current_bankroll)
+        
+        outcome = "Draw"
+        if reward > 0: outcome = "Win"
+        elif reward < 0: outcome = "Loss"
+        
+        print(f"Hand {i+1}: {outcome} ({reward}). Bankroll: {current_bankroll:.1f} Euro")
+
+    print(f"\n--- Night Over ---")
+    print(f"Final Bankroll: {current_bankroll:.1f} Euro")
+    print(f"Profit/Loss: {current_bankroll - bankroll:.1f} Euro")
+
 # --- 3. Training Loop ---
 
 if __name__ == "__main__":
     env = BlackjackEnvironment()
     agent = MonteCarloAgent()
 
-    num_episodes = 5000000
+    num_episodes = 500000 # Reduced for quick simulation
     
     # Tracking for visualization (optional)
     win_count = 0
@@ -156,31 +203,14 @@ if __name__ == "__main__":
             
         agent.update(episode)
         
-        if episode[-1][2] == 1: # Last reward was a win
+        if episode[-1][2] >= 1: # Last reward was a win (1 or 1.5)
             win_count += 1
             
-        if (i+1) % 10000 == 0:
-            print(f"Episode {i+1}/{num_episodes} - Win Rate (approx): {win_count/10000:.2f}")
+        if (i+1) % 50000 == 0:
+            print(f"Episode {i+1}/{num_episodes} - Win Rate (approx): {win_count/50000:.2f}")
             win_count = 0
 
     print("Training finished.")
 
-    # --- Test/Demo ---
-    print("\nTest Games:")
-    agent.epsilon = 0 # Turn off exploration
-    for _ in range(5):
-        state = env.reset()
-        done = False
-        print(f"\nStart Game. Initial Hand: {state}")
-        while not done:
-            action = agent.choose_action(state)
-            print(f"Action: {'Hit' if action ==1 else 'Stick'}")
-            state, reward, done = env.step(action)
-            print(f"New State: {state}")
-        
-        result = "Draw"
-        if reward == 1: result = "Win"
-        elif reward == -1: result = "Loss"
-        print(f"Game Over. Result: {result}")
-        print(f"Player's Hand: {env.player_hand} (Sum: {env.sum_hand(env.player_hand)})")
-        print(f"Dealer's Hand: {env.dealer_hand} (Sum: {env.sum_hand(env.dealer_hand)})")
+    # --- Gamble Night ---
+    gamble_night(agent, env)

@@ -53,9 +53,19 @@ Where:
 * $\alpha$ is the learning rate (e.g., 0.01).
 * $G_t$ is the total return of the episode.
 * The term $[G_t - Q(S_t, A_t)]$ represents the prediction error.
+## New Features
+
+### 3:2 Payout
+The game now rewards **"Natural Blackjacks"** (getting 21 with the first two cards) with a **3:2 payout** (1.5x return). This makes the strategy more realistic compared to standard casino rules.
+
+### Gamble Night Simulation
+The project now includes a **"Gamble Night"** mode which runs after training.
+* The agent starts with a bankroll (e.g., **500 Euro**).
+* It places fixed bets (e.g., **10 Euro**) on every hand.
+* The simulation tracks the bankroll over time, simulating a real night at the casino.
+
 ## TODO
 
 * Heatmap
 * Double Down
-* 3:2 Payout
 * Real Deck with 4 Colors
