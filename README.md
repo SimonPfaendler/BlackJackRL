@@ -64,6 +64,10 @@ The project now includes a **"Gamble Night"** mode which runs after training.
 * It places fixed bets (e.g., **10 Euro**) on every hand.
 * The simulation tracks the bankroll over time, simulating a real night at the casino.
 
+--- Night Over ---
+Final Bankroll: 345.0 Euro
+Profit/Loss: -155.0 Euro
+
 ## TODO
 
 * Heatmap
