@@ -110,7 +110,7 @@ class BlackjackEnvironment:
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
                 elif len(self.player_hand) > 2:
-                    reward = 1.5 # Bonus for hitting and winning
+                    reward = 2.0 # Bonus for hitting and winning (Aggressive)
                 return self.get_obs(), reward, True
             
             if player_sum > dealer_sum:
@@ -119,7 +119,7 @@ class BlackjackEnvironment:
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
                 elif len(self.player_hand) > 2:
-                    reward = 1.5 # Bonus for hitting and winning
+                    reward = 2.0 # Bonus for hitting and winning (Aggressive)
                 return self.get_obs(), reward, True
             elif player_sum < dealer_sum:
                 return self.get_obs(), -1, True # Lose
@@ -129,7 +129,7 @@ class BlackjackEnvironment:
 # --- 2. The Agent ---
 
 class MonteCarloAgent:
-    def __init__(self, action_space=[0, 1, 2], alpha=0.05, gamma=1.0, epsilon=0.1):
+    def __init__(self, action_space=[0, 1, 2], alpha=0.02, gamma=1.0, epsilon=0.1):
         self.Q = {} # Dictionary mapping (state, action) -> value
         self.action_space = action_space
         self.alpha = alpha # Learning rate
