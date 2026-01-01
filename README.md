@@ -94,3 +94,5 @@ Profit/Loss: +45.0 Euro
 
 * Heatmap
 * Real Deck with 4 Colors
+* Improve Hit Behavior of Agent
+* Add Split maybe?
