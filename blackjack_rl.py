@@ -109,6 +109,8 @@ class BlackjackEnvironment:
                 reward = 1
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
+                elif len(self.player_hand) > 2:
+                    reward = 1.5 # Bonus for hitting and winning
                 return self.get_obs(), reward, True
             
             if player_sum > dealer_sum:
@@ -116,6 +118,8 @@ class BlackjackEnvironment:
                 reward = 1
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
+                elif len(self.player_hand) > 2:
+                    reward = 1.5 # Bonus for hitting and winning
                 return self.get_obs(), reward, True
             elif player_sum < dealer_sum:
                 return self.get_obs(), -1, True # Lose
@@ -125,7 +129,7 @@ class BlackjackEnvironment:
 # --- 2. The Agent ---
 
 class MonteCarloAgent:
-    def __init__(self, action_space=[0, 1, 2], alpha=0.01, gamma=1.0, epsilon=0.1):
+    def __init__(self, action_space=[0, 1, 2], alpha=0.05, gamma=1.0, epsilon=0.1):
         self.Q = {} # Dictionary mapping (state, action) -> value
         self.action_space = action_space
         self.alpha = alpha # Learning rate
@@ -193,6 +197,7 @@ def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
             
         state = env.reset()
         done = False
+        actions_taken = []
         
         # print(f"Hand {i+1}: {state}")
         
@@ -201,6 +206,7 @@ def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
             action_name = 'Stick'
             if action == 1: action_name = 'Hit'
             if action == 2: action_name = 'Double'
+            actions_taken.append(action_name)
             
             # print(f"Action: {action_name}")
             state, reward, done = env.step(action)
@@ -217,7 +223,8 @@ def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
         # Calculate effective bet for display (Double Down = 2x)
         effective_bet = bet * 2 if (action == 2) else bet
         
-        print(f"Hand {i+1}: {outcome} ({action_name}). Bet: {effective_bet} -> Profit: {winnings:+.1f}. Bankroll: {current_bankroll:.1f} Euro")
+        action_str = ", ".join(actions_taken)
+        print(f"Hand {i+1}: {outcome} ({action_str}). Player: {env.player_hand} Dealer: {env.dealer_hand}. Bankroll: {current_bankroll:.1f} Euro")
 
     print(f"\n--- Night Over ---")
     print(f"Final Bankroll: {current_bankroll:.1f} Euro")
