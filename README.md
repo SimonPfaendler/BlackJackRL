@@ -20,7 +20,7 @@ The environment is a simplified simulation of Blackjack:
 | Component | Description |
 | :--- | :--- |
 | **State Space** | `(Player Sum, Dealer Showing Card, Usable Ace)` |
-| **Actions** | `0` (Stick), `1` (Hit) |
+| **Actions** | `0` (Stick), `1` (Hit) `2` (Double Down) |
 | **Rewards** | `+1` (Win), `-1` (Loss/Bust), `0` (Draw) |
 | **Simplification** | Infinite deck, single suit (uniform probability for 2-9, 4x for 10s). |
 
