@@ -1,5 +1,8 @@
 import random
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 
 # --- 1. The Environment ---
 
@@ -110,7 +113,7 @@ class BlackjackEnvironment:
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
                 elif len(self.player_hand) > 2:
-                    reward = 2.0 # Bonus for hitting and winning (Aggressive)
+                    reward = 1.5 # Bonus for hitting and winning (Aggressive)
                 return self.get_obs(), reward, True
             
             if player_sum > dealer_sum:
@@ -119,7 +122,7 @@ class BlackjackEnvironment:
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
                 elif len(self.player_hand) > 2:
-                    reward = 2.0 # Bonus for hitting and winning (Aggressive)
+                    reward = 1.5 # Bonus for hitting and winning (Aggressive)
                 return self.get_obs(), reward, True
             elif player_sum < dealer_sum:
                 return self.get_obs(), -1, True # Lose
@@ -129,7 +132,7 @@ class BlackjackEnvironment:
 # --- 2. The Agent ---
 
 class MonteCarloAgent:
-    def __init__(self, action_space=[0, 1, 2], alpha=0.02, gamma=1.0, epsilon=0.1):
+    def __init__(self, action_space=[0, 1, 2], alpha=0.01, gamma=1.0, epsilon=0.1):
         self.Q = {} # Dictionary mapping (state, action) -> value
         self.action_space = action_space
         self.alpha = alpha # Learning rate
@@ -230,7 +233,83 @@ def gamble_night(agent, env, bankroll=500, bet=10, max_hands=100):
     print(f"Final Bankroll: {current_bankroll:.1f} Euro")
     print(f"Profit/Loss: {current_bankroll - bankroll:.1f} Euro")
 
-# --- 3. Training Loop ---
+# --- 3. Visualization ---
+
+def plot_policy_and_value(agent):
+    # Dimensions
+    # Usable Ace: Player sum 12-21 (10 rows)
+    player_sums_usable = range(21, 11, -1) 
+    # No Usable Ace: Player sum 4-21 (18 rows)
+    player_sums_no_usable = range(21, 3, -1)
+    
+    dealer_cards = range(2, 12) # 2-10, Ace(11)
+    dealer_labels = [2,3,4,5,6,7,8,9,10,'A']
+    
+    # Init matrices
+    val_use = np.zeros((len(player_sums_usable), len(dealer_cards)))
+    pol_use = np.zeros((len(player_sums_usable), len(dealer_cards)))
+    txt_use = np.empty((len(player_sums_usable), len(dealer_cards)), dtype=object)
+    
+    val_no = np.zeros((len(player_sums_no_usable), len(dealer_cards)))
+    pol_no = np.zeros((len(player_sums_no_usable), len(dealer_cards)))
+    txt_no = np.empty((len(player_sums_no_usable), len(dealer_cards)), dtype=object)
+
+    action_labels = {0: 'S', 1: 'H', 2: 'DD'}
+
+    # Fill Usable Ace
+    for i, p_sum in enumerate(player_sums_usable):
+        for j, d_card in enumerate(dealer_cards):
+            state = (p_sum, d_card, True, True)
+            q_values = [agent.get_q(state, a) for a in agent.action_space]
+            val_use[i, j] = max(q_values)
+            best_a = np.argmax(q_values)
+            pol_use[i, j] = best_a
+            txt_use[i, j] = action_labels[best_a]
+
+    # Fill No Usable Ace
+    for i, p_sum in enumerate(player_sums_no_usable):
+        for j, d_card in enumerate(dealer_cards):
+            state = (p_sum, d_card, False, True)
+            q_values = [agent.get_q(state, a) for a in agent.action_space]
+            val_no[i, j] = max(q_values)
+            best_a = np.argmax(q_values)
+            pol_no[i, j] = best_a
+            txt_no[i, j] = action_labels[best_a]
+
+    # Custom Color Map for Policy: Stick(0)=Green, Hit(1)=Yellow, Double(2)=Red
+    cmap_policy = ListedColormap(['green', 'yellow', 'red'])
+
+    # Plotting
+    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    
+    # helper
+    def plot_heatmap(ax, data, title, y_labels, annot=True, cmap="viridis", vmin=None, vmax=None, cbar=True, fmt=""):
+        sns.heatmap(data, ax=ax, cmap=cmap, annot=annot, fmt=fmt, 
+                    xticklabels=dealer_labels, yticklabels=y_labels,
+                    vmin=vmin, vmax=vmax, cbar=cbar)
+        ax.set_title(title)
+        ax.set_ylabel("Player Sum")
+        ax.set_xlabel("Dealer Showing")
+        ax.set_yticklabels(y_labels, rotation=0)
+
+    # 1. Value (Usable Ace)
+    plot_heatmap(axes[0, 0], val_use, "Value - Usable Ace", player_sums_usable, annot=True, fmt=".1f")
+    
+    # 2. Policy (Usable Ace)
+    plot_heatmap(axes[0, 1], pol_use, "Policy - Usable Ace (S/H/DD)", player_sums_usable, 
+                 annot=txt_use, cmap=cmap_policy, cbar=False, vmin=0, vmax=2)
+    
+    # 3. Value (No Usable Ace)
+    plot_heatmap(axes[1, 0], val_no, "Value - No Usable Ace", player_sums_no_usable, annot=True, fmt=".1f")
+
+    # 4. Policy (No Usable Ace)
+    plot_heatmap(axes[1, 1], pol_no, "Policy - No Usable Ace (S/H/DD)", player_sums_no_usable, 
+                 annot=txt_no, cmap=cmap_policy, cbar=False, vmin=0, vmax=2)
+
+    plt.tight_layout()
+    plt.show()
+
+# --- 4. Training Loop ---
 
 if __name__ == "__main__":
     env = BlackjackEnvironment()
@@ -265,7 +344,7 @@ if __name__ == "__main__":
         elif final_reward <= -1: # Loss
             loss_count += 1
         else: # Draw (0)
-            draw_count += 1 # Note: In Gym, sometimes 0 is just "not finished", but here episode is done.
+            draw_count += 1
             
         if (i+1) % 50000 == 0:
             total_in_batch = 50000
@@ -281,3 +360,6 @@ if __name__ == "__main__":
 
     # --- Gamble Night ---
     gamble_night(agent, env)
+    
+    # --- Visualize ---
+    plot_policy_and_value(agent)
