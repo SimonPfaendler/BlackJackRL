@@ -34,7 +34,7 @@ The environment is a simplified simulation of Blackjack:
 
 2.  **Install dependencies:**
     ```bash
-    pip install numpy matplotlib
+    pip install numpy matplotlib seaborn
     ```
 
 3.  **Run the Training:**
@@ -66,8 +66,12 @@ The project now includes a **"Gamble Night"** mode which runs after training.
 
 ## Simulation Results
 
-### Heatmap 
+### Policy & Value Visualization
 <img width="1920" height="967" alt="Figure_2" src="https://github.com/user-attachments/assets/69e4ddf8-3857-4921-acae-33fb771dfb2f" />
+
+The visualization above shows the **Value Function** (expected return) and **Optimal Policy** learned by the agent.
+- **Key Learnings:** The agent has correctly learned to **Double Down (DD)** on an 11, maximizing potential payout.
+- **Current Behavior:** The agent is currently quite conservative and **does not Hit (H) very often**, preferring to Stick (S) on most hands.
 
 ### Training Win Rates (500,000 Episodes)
 ```text
