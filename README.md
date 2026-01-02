@@ -66,6 +66,9 @@ The project now includes a **"Gamble Night"** mode which runs after training.
 
 ## Simulation Results
 
+### Heatmap 
+<img width="1920" height="967" alt="Figure_2" src="https://github.com/user-attachments/assets/69e4ddf8-3857-4921-acae-33fb771dfb2f" />
+
 ### Training Win Rates (500,000 Episodes)
 ```text
 Episode 50000/500000 - Win: 0.39 | Draw: 0.07 | Loss: 0.54
@@ -92,7 +95,6 @@ Profit/Loss: +45.0 Euro
 
 ## TODO
 
-* Heatmap
 * Real Deck with 4 Colors
 * Improve Hit Behavior of Agent
 * Add Split maybe?
