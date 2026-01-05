@@ -279,6 +279,9 @@ def plot_policy_and_value(agent):
     # Custom Color Map for Policy: Stick(0)=Green, Hit(1)=Yellow, Double(2)=Red
     cmap_policy = ListedColormap(['green', 'yellow', 'red'])
 
+    # Labels for Usable Ace (e.g., 21 -> "A, 10")
+    usable_ace_labels = [f"A, {s-11}" if s != 12 else "A, A" for s in player_sums_usable]
+
     # Plotting
     fig, axes = plt.subplots(2, 2, figsize=(14, 12))
     
@@ -288,15 +291,15 @@ def plot_policy_and_value(agent):
                     xticklabels=dealer_labels, yticklabels=y_labels,
                     vmin=vmin, vmax=vmax, cbar=cbar)
         ax.set_title(title)
-        ax.set_ylabel("Player Sum")
+        ax.set_ylabel("Player Hand")
         ax.set_xlabel("Dealer Showing")
         ax.set_yticklabels(y_labels, rotation=0)
 
     # 1. Value (Usable Ace)
-    plot_heatmap(axes[0, 0], val_use, "Value - Usable Ace", player_sums_usable, annot=True, fmt=".1f")
+    plot_heatmap(axes[0, 0], val_use, "Value - Usable Ace", usable_ace_labels, annot=True, fmt=".1f")
     
     # 2. Policy (Usable Ace)
-    plot_heatmap(axes[0, 1], pol_use, "Policy - Usable Ace (S/H/DD)", player_sums_usable, 
+    plot_heatmap(axes[0, 1], pol_use, "Policy - Usable Ace (S/H/DD)", usable_ace_labels, 
                  annot=txt_use, cmap=cmap_policy, cbar=False, vmin=0, vmax=2)
     
     # 3. Value (No Usable Ace)
