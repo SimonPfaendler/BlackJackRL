@@ -296,14 +296,14 @@ def plot_policy_and_value(agent):
         ax.set_yticklabels(y_labels, rotation=0)
 
     # 1. Value (Usable Ace)
-    plot_heatmap(axes[0, 0], val_use, "Value - Usable Ace", usable_ace_labels, annot=True, fmt=".1f")
+    plot_heatmap(axes[0, 0], val_use, "Value - Usable Ace", usable_ace_labels, annot=True, fmt=".3f")
     
     # 2. Policy (Usable Ace)
     plot_heatmap(axes[0, 1], pol_use, "Policy - Usable Ace (S/H/DD)", usable_ace_labels, 
                  annot=txt_use, cmap=cmap_policy, cbar=False, vmin=0, vmax=2)
     
     # 3. Value (No Usable Ace)
-    plot_heatmap(axes[1, 0], val_no, "Value - No Usable Ace", player_sums_no_usable, annot=True, fmt=".1f")
+    plot_heatmap(axes[1, 0], val_no, "Value - No Usable Ace", player_sums_no_usable, annot=True, fmt=".3f")
 
     # 4. Policy (No Usable Ace)
     plot_heatmap(axes[1, 1], pol_no, "Policy - No Usable Ace (S/H/DD)", player_sums_no_usable, 
