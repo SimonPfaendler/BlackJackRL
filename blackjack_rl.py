@@ -113,7 +113,7 @@ class BlackjackEnvironment:
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
                 elif len(self.player_hand) > 2:
-                    reward = 1.5 # Bonus for hitting and winning (Aggressive)
+                    reward = 2.5 # Bonus for hitting and winning (Aggressive) - Increased from 1.5
                 return self.get_obs(), reward, True
             
             if player_sum > dealer_sum:
@@ -122,7 +122,7 @@ class BlackjackEnvironment:
                 if player_sum == 21 and len(self.player_hand) == 2:
                     reward = 1.5
                 elif len(self.player_hand) > 2:
-                    reward = 1.5 # Bonus for hitting and winning (Aggressive)
+                    reward = 2.5 # Bonus for hitting and winning (Aggressive) - Increased from 1.5
                 return self.get_obs(), reward, True
             elif player_sum < dealer_sum:
                 return self.get_obs(), -1, True # Lose
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     env = BlackjackEnvironment()
     agent = MonteCarloAgent()
 
-    num_episodes = 500000 # Reduced for quick simulation
+    num_episodes = 500000
     
     # Tracking for visualization
     win_count = 0
