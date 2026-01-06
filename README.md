@@ -76,9 +76,9 @@ The visualization above shows the **Value Function** (expected return) and **Opt
 
 ### Training Win Rates (500,000 Episodes)
 ```text
-Episode 50000/500000 - Win: 0.39 | Draw: 0.07 | Loss: 0.54
+Episode 50000/500000 - Win: 0.37 | Draw: 0.06 | Loss: 0.57 | Epsilon: 0.0821
 ...
-Episode 500000/500000 - Win: 0.40 | Draw: 0.07 | Loss: 0.53
+Episode 500000/500000 - Win: 0.42 | Draw: 0.09 | Loss: 0.50 | Epsilon: 0.0100
 Training finished.
 ```
 
@@ -86,16 +86,18 @@ Training finished.
 ```text
 Starting Bankroll: 500 Euro
 Bet per hand: 10 Euro
-Hand 1: Win (Double). Player: [3, 7, 11] Dealer: [5, 10, 4]. Bankroll: 520.0 Euro
-Hand 2: Loss (Stick). Player: [6, 10] Dealer: [9, 8]. Bankroll: 510.0 Euro
+Hand 1: Win (Hit, Hit, Hit, Hit, Hit, Stick). Player: [2, 1, 3, 1, 6, 2, 3] Dealer: [7, 9, 6]. Bankroll: 525.0 Euro
+Hand 2: Loss (Hit). Player: [2, 10, 10] Dealer: [9, 10]. Bankroll: 515.0 Euro
 ...
-Hand 20: Loss (Hit, Stick). Player: [4, 10, 4] Dealer: [10, 10]. Bankroll: 510.0 Euro
+Hand 20: Loss (Hit, Hit, Stick). Player: [4, 2, 5, 4] Dealer: [10, 4, 6]. Bankroll: 560.0 Euro
 ...
-Hand 100: Win (Stick). Player: [10, 10] Dealer: [5, 7, 6]. Bankroll: 545.0 Euro
+Hand 27: Win (Double). Player: [3, 8, 10] Dealer: [4, 7, 6]. Bankroll: 600.0 Euro
+...
+Hand 100: Loss (Stick). Player: [10, 4] Dealer: [10, 10]. Bankroll: 1020.0 Euro
 
 --- Night Over ---
-Final Bankroll: 545.0 Euro
-Profit/Loss: +45.0 Euro
+Final Bankroll: 1020.0 Euro
+Profit/Loss: 520.0 Euro
 ```
 
 ## TODO

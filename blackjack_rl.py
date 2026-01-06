@@ -132,14 +132,14 @@ class BlackjackEnvironment:
 # --- 2. The Agent ---
 
 class MonteCarloAgent:
-    def __init__(self, action_space=[0, 1, 2], alpha=0.02, gamma=1.0, epsilon=1.0):
+    def __init__(self, action_space=[0, 1, 2], alpha=0.01, gamma=1.0, epsilon=1.0):
         self.Q = {} # Dictionary mapping (state, action) -> value
         self.action_space = action_space
         self.alpha = alpha # Learning rate
         self.gamma = gamma # Discount factor 1 = no discount
         self.epsilon = epsilon
         self.epsilon_min = 0.01
-        self.epsilon_decay = 0.9995
+        self.epsilon_decay = 0.99995
         
     def get_q(self, state, action):
         return self.Q.get((state, action), 0.0)
