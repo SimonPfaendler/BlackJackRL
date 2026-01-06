@@ -67,7 +67,8 @@ The project now includes a **"Gamble Night"** mode which runs after training.
 ## Simulation Results
 
 ### Policy & Value Visualization Heatmap
-<img width="1920" height="967" alt="Figure_3" src="https://github.com/user-attachments/assets/8809e600-916d-42da-a213-537e0f442f0f" />
+<img width="1920" height="967" alt="Figure_5" src="https://github.com/user-attachments/assets/34de10cd-d04b-4a0d-84c7-80e839a49792" />
+
 
 
 The visualization above shows the **Value Function** (expected return) and **Optimal Policy** learned by the agent.
