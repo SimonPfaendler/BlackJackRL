@@ -106,4 +106,5 @@ Profit/Loss: 520.0 Euro
 * Real Deck with 4 Colors
 * Improve Hit Behavior of Agent
 * Gamble Night Vizualization Episodes
+* Vizualization of different Learning Rates
 * Add Split maybe?
